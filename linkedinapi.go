@@ -19,11 +19,6 @@ const (
 	protocolVersion              = "2.0.0"
 )
 
-// Client struct for LinkedIn API
-type Client struct {
-	AccessToken string
-}
-
 // ShareContentRequest represents the main structure of the share content request payload.
 type ShareContentRequest struct {
 	Author          string          `json:"author"`
@@ -134,10 +129,17 @@ func (c *Client) ShareText(personURN, text string) (string, error) {
 	return c.CreateShare(shareRequest)
 }
 
+// Client struct for LinkedIn API
+type Client struct {
+	AccessToken string
+	httpClient  *http.Client
+}
+
 // NewClient initializes a new LinkedIn API client
 func NewClient(accessToken string) *Client {
 	return &Client{
 		AccessToken: accessToken,
+		httpClient:  &http.Client{},
 	}
 }
 
@@ -157,8 +159,7 @@ func (c *Client) doRequest(method, url string, requestBody interface{}) (*http.R
 	req.Header.Set("X-Restli-Protocol-Version", "2.0.0")
 	req.Header.Set("Authorization", "Bearer "+c.AccessToken)
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
