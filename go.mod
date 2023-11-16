@@ -1,3 +1,3 @@
-module linkedinapi
+module github.com/painhardcore/linkedin-go-api
 
-go 1.19
+go 1.21
